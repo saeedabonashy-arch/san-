@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة SAN المالية | الابتكار المالي الذكي</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --bg-color: #f4eee3;
+            --card-bg: #ffffff;
+            --primary-color: #785a36;
+            --primary-hover: #5e4428;
+            --accent-gold: #c5a059;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e5dac9;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(#d4c4ad 1.2px, transparent 1.2px), 
+                linear-gradient(135deg, rgba(120, 90, 54, 0.03) 0%, rgba(197, 160, 89, 0.05) 100%);
+            background-size: 32px 32px, 100% 100%;
+            color: var(--text-main);
+            direction: rtl;
+            text-align: right;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* تساقط هادي واحترافي للفلوس في الخلفية */
+        #money-rain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .money-item {
+            position: absolute;
+            top: -40px;
+            font-size: 1.5rem;
+            opacity: 0.5;
+            user-select: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-40px) rotate(0deg);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(105vh) rotate(180deg);
+                opacity: 0.1;
+            }
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            padding: 1.2rem 3rem;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(120, 90, 54, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 2.5rem auto;
+            padding: 2.8rem;
+            background: var(--card-bg);
+            border-radius: 28px;
+            box-shadow: 0 20px 45px rgba(120, 90, 54, 0.08);
+            border: 1px solid var(--border-color);
+            width: 90%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .step-page {
+            display: none;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .step-page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .step-img {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 25px rgba(120, 90, 54, 0.12);
+            border: 2px solid #fff;
+            filter: brightness(0.98);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+            text-align: center;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .option-btn {
+            background: #faf6f0;
+            color: var(--text-main);
+            border: 1.5px solid var(--border-color);
+            padding: 1.2rem 1.5rem;
+            font-size: 1.08rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: right;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary-color);
+            background: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(120, 90, 54, 0.1);
+        }
+
+        .amount-chips {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .chip {
+            background: #f7f3ed;
+            border: 1.5px solid var(--border-color);
+            color: #475569;
+            padding: 0.9rem;
+            border-radius: 14px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.02rem;
+            transition: all 0.2s ease;
+        }
+
+        .chip:hover, .chip.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: #ffffff;
+            box-shadow: 0 6px 15px rgba(120, 90, 54, 0.2);
+        }
+
+        .main-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: #ffffff;
+            border: none;
+            padding: 1.1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1.5rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 22px rgba(120, 90, 54, 0.22);
+        }
+
+        .main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(120, 90, 54, 0.32);
+        }
+
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+            color: #ffffff !important;
+            box-shadow: 0 8px 22px rgba(16, 185, 129, 0.22) !important;
+        }
+
+        .whatsapp-btn:hover {
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.32) !important;
+        }
+
+        .secondary-btn {
+            background: #f1ebd8;
+            color: #5c472e;
+            box-shadow: none;
+            margin-top: 0.8rem;
+        }
+
+        .secondary-btn:hover {
+            background: #e6ddc5;
+            box-shadow: none;
+        }
+
+        .copy-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 8px;
+            transition: 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.6rem;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.95rem;
+            background: #fcf9f5;
+            border: 1.5px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 14px;
+            font-size: 1.02rem;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(120, 90, 54, 0.1);
+        }
+
+        .info-box {
+            background: #fdfbf7;
+            padding: 1.6rem;
+            border-radius: 18px;
+            border-right: 5px solid var(--primary-color);
+            margin-top: 1.2rem;
+            line-height: 1.8;
+            border-top: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .highlight-number {
+            color: var(--primary-color);
+            font-size: 1.35rem;
+            font-weight: bold;
+            background: #f3ece0;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0.6rem 0;
+            letter-spacing: 1.5px;
+        }
+
+        footer {
+            background-color: #ffffff;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 1.4rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.92rem;
+            position: relative;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- حاوية تساقط النقود الاحترافي -->
+    <div id="money-rain-container"></div>
+
+    <header>
+        <div class="logo">
+            <span>💼</span> منصة SAN المالية
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- 1. الرئيسية -->
+        <div id="step-home" class="step-page active">
+            <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=800&q=80" alt="Money Funds" class="step-img">
+            <h2>مرحباً بك في منصة SAN</h2>
+            <p>وجهتك الرقمية الموثوقة لحلول الاستثمار المربح والتمويل المرن بأعلى معايير الأمان والسرعة.</p>
+            <button class="main-btn" onclick="goToStep('step-services')">استكشف الخدمات المالية ➔</button>
+        </div>
+
+        <!-- 2. الخدمات -->
+        <div id="step-services" class="step-page">
+            <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=800&q=80" alt="Money Wealth" class="step-img">
+            <h2>اختر القطاع المالي</h2>
+            <p>حدّد الخدمة المطلوبة لبدء معاملتك فوراً بكل سهولة</p>
+            <div class="options-grid">
+                <button class="option-btn" onclick="goToStep('step-investment-amount')">📈 الاستثمار وتنمية الأموال</button>
+                <button class="option-btn" onclick="goToStep('step-installment-duration')">💳 التقسيط المرن والتمويل</button>
+            </div>
+            <button class="main-btn secondary-btn" onclick="goToStep('step-home')">العودة للرئيسية</button>
+        </div>
+
+
+        <!-- ================= قسم الاستثمار ================= -->
+        
+        <!-- الخطوة 1: المبلغ -->
+        <div id="step-investment-amount" class="step-page">
+            <img src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80" alt="Cash Money" class="step-img">
+            <h2>الاستثمار وتنمية الأموال</h2>
+            <div class="form-group">
+                <label>ما المبلغ المراد استثماره؟ (بالجنيه):</label>
+                <div class="amount-chips">
+                    <div class="chip" onclick="setInvAmount(10000)">10,000</div>
+                    <div class="chip" onclick="setInvAmount(20000)">20,000</div>
+                    <div class="chip" onclick="setInvAmount(30000)">30,000</div>
+                    <div class="chip" onclick="setInvAmount(40000)">40,000</div>
+                    <div class="chip" onclick="setInvAmount(50000)">50,000</div>
+                </div>
+                <input type="number" id="inv-input-amount" step="any" placeholder="أو أدخل المبلغ يدوياً...">
+            </div>
+            <button class="main-btn" onclick="submitInvestmentAmount()">التالي ➔</button>
+            <button class="main-btn secondary-btn" onclick="goToStep('step-services')">رجوع</button>
+        </div>
+
+        <!-- الخطوة 2: المدة والفائدة -->
+        <div id="step-investment-duration" class="step-page">
+            <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=800&q=80" alt="Investment Growth" class="step-img">
+            <h2>اختر خطة الاستثمار</h2>
+            <div class="options-grid">
+                <button class="option-btn" onclick="selectInvestmentPlan(6, 12.5)">✨ 6 شهور (عائد 12.5%)</button>
+                <button class="option-btn" onclick="selectInvestmentPlan(12, 25)">🌟 12 شهر / سنة (عائد 25%)</button>
+            </div>
+            <button class="main-btn secondary-btn" onclick="goToStep('step-investment-amount')">رجوع</button>
+        </div>
+
+        <!-- الخطوة 3: عرض الأرباح والتحويل -->
+        <div id="step-investment-upload" class="step-page">
+            <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80" alt="Financial Transfer" class="step-img">
+            <h2>تفاصيل الأرباح وعملية التحويل</h2>
+            <div id="investment-summary" class="info-box"></div>
+            <div class="info-box" style="text-align: center; margin-top: 1rem;">
+                <p>يرجى تحويل مبلغ الاستثمار عبر فودافون كاش أو إنستا باي على الرقم المعتمد:</p>
+                <div class="highlight-number">
+                    <span id="admin-phone-text" dir="ltr">01067648677</span>
+                    <button class="copy-btn" onclick="copyPhoneNum()">نسخ 📋</button>
+                </div>
+                <p style="font-size: 0.92rem; margin-top: 0.5rem;">ثم أرفق صورة إيصال التحويل أدناه:</p>
+            </div>
+            <div class="form-group" style="margin-top: 1rem;">
+                <label>صورة إيصال التحويل (إلزامي):</label>
+                <input type="file" id="inv-receipt-img" accept="image/*">
+            </div>
+            <button class="main-btn whatsapp-btn" onclick="finishInvestment()">تأكيد وإرسال الطلب عبر واتساب 💬</button>
+            <button class="main-btn secondary-btn" onclick="goToStep('step-investment-duration')">رجوع</button>
+        </div>
+
+        <div id="step-investment-success" class="step-page">
+            <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80" alt="Profit Success" class="step-img">
+            <h2>تم إرسال طلب الاستثمار بنجاح!</h2>
+            <div class="info-box" style="text-align: center;">
+                <p id="inv-ref-text" style="font-weight: 600; color: var(--primary-color); margin-bottom: 0.5rem;"></p>
+                <p>تم تحويل تفاصيل خطتك الاستثمارية وإيصال التحويل بنجاح، وسيتم التواصل معك لتفعيل المحفظة.</p>
+            </div>
+            <button class="main-btn secondary-btn" onclick="goToStep('step-home')">العودة للرئيسية</button>
+        </div>
+
+
+        <!-- ================= قسم التقسيط ================= -->
+
+        <!-- الخطوة 1: المدة -->
+        <div id="step-installment-duration" class="step-page">
+            <img src="https://images.unsplash.com/photo-1556742049-0a67540957cf?auto=format&fit=crop&w=800&q=80" alt="Installment Payments" class="step-img">
+            <h2>التقسيط المرن والتمويل</h2>
+            <div class="options-grid">
+                <button class="option-btn" onclick="selectInstallmentPlan(3, 7.5)">3 شهور (فائدة 7.5%)</button>
+                <button class="option-btn" onclick="selectInstallmentPlan(6, 15)">6 شهور (فائدة 15%)</button>
+                <button class="option-btn" onclick="selectInstallmentPlan(9, 22.5)">9 شهور (فائدة 22.5%)</button>
+                <button class="option-btn" onclick="selectInstallmentPlan(12, 30)">12 شهر / سنة (فائدة 30%)</button>
+            </div>
+            <button class="main-btn secondary-btn" onclick="goToStep('step-services')">رجوع</button>
+        </div>
+
+        <!-- الخطوة 2: المبلغ -->
+        <div id="step-installment-amount" class="step-page">
+            <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80" alt="Cash Money Flow" class="step-img">
+            <h2>حدد مبلغ التمويل المطلوب</h2>
+            <div class="form-group">
+                <label>ما هو المبلغ المراد تقسيطه؟</label>
+                <div class="amount-chips">
+                    <div class="chip" onclick="setInstAmount(10000)">10,000</div>
+                    <div class="chip" onclick="setInstAmount(20000)">20,000</div>
+                    <div class="chip" onclick="setInstAmount(30000)">30,000</div>
+                    <div class="chip" onclick="setInstAmount(40000)">40,000</div>
+                    <div class="chip" onclick="setInstAmount(50000)">50,000</div>
+                </div>
+                <input type="number" id="inst-input-amount" step="any" placeholder="أو أدخل المبلغ يدوياً...">
+            </div>
+            <button class="main-btn" onclick="submitInstallmentAmount()">التالي ➔</button>
+            <button class="main-btn secondary-btn" onclick="goToStep('step-installment-duration')">رجوع</button>
+        </div>
+
+        <!-- الخطوة 3: ملخص الحسبة + رفع البطاقة -->
+        <div id="step-installment-summary" class="step-page">
+            <img src="https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80" alt="Identity File" class="step-img">
+            <h2>مراجعة الأقساط والمستندات</h2>
+            <div id="installment-calc-box" class="info-box"></div>
+            <div class="form-group" style="margin-top: 1.5rem;">
+                <label>صورة البطاقة الشخصية (إلزامي):</label>
+                <input type="file" id="inst-id-img" accept="image/*">
+            </div>
+            <button class="main-btn whatsapp-btn" onclick="finishInstallment()">إرسال طلب التقسيط عبر واتساب 💬</button>
+            <button class="main-btn secondary-btn" onclick="goToStep('step-installment-amount')">رجوع</button>
+        </div>
+
+        <div id="step-installment-success" class="step-page">
+            <img src="https://images.unsplash.com/photo-1512358958014-b651a7ee1773?auto=format&fit=crop&w=800&q=80" alt="Success Approval" class="step-img">
+            <h2>تم إرسال طلب التقسيط بنجاح!</h2>
+            <div class="info-box" style="text-align: center;">
+                <p id="inst-ref-text" style="font-weight: 600; color: var(--primary-color); margin-bottom: 0.5rem;"></p>
+                <p>تم إرسال تفاصيل التمويل وصورة البطاقة للمراجعة والاعتماد الفوري.</p>
+            </div>
+            <button class="main-btn secondary-btn" onclick="goToStep('step-home')">العودة للرئيسية</button>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>جميع الحقوق محفوظة &copy; 2026 - منصة SAN المالية</p>
+    </footer>
+
+    <script>
+        // --- كود تساقط النقود الهادي والمحترف ---
+        function createMoneyRain() {
+            const container = document.getElementById('money-rain-container');
+            const icons = ['💵', '💰', '💸', '🪙'];
+            const count = 12; // عدد متوازن وغير مزعج
+
+            for (let i = 0; i < count; i++) {
+                const money = document.createElement('div');
+                money.classList.add('money-item');
+                money.innerText = icons[Math.floor(Math.random() * icons.length)];
+                money.style.left = Math.random() * 100 + 'vw';
+                money.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                money.style.animationDelay = (Math.random() * 5) + 's';
+                money.style.fontSize = (Math.random() * 0.8 + 1.2) + 'rem';
+                container.appendChild(money);
+            }
+        }
+
+        createMoneyRain();
+
+        let userData = {
+            amount: 0,
+            duration: 0,
+            rate: 0
+        };
+
+        const adminPhone = "201067648677";
+
+        function copyPhoneNum() {
+            const phoneText = document.getElementById('admin-phone-text').innerText;
+            navigator.clipboard.writeText(phoneText).then(() => {
+                alert('تم نسخ الرقم بنجاح: ' + phoneText);
+            });
+        }
+
+        function generateReferenceId() {
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            return `#SAN-${randomNum}`;
+        }
+
+        function goToStep(stepId) {
+            document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById(stepId);
+            target.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- الاستثمار ---
+        function setInvAmount(val) {
+            document.getElementById('inv-input-amount').value = val;
+        }
+
+        function submitInvestmentAmount() {
+            const amt = parseFloat(document.getElementById('inv-input-amount').value);
+            if(!amt || amt <= 0) {
+                alert('من فضلك أدخل مبلغ استثمار صحيح');
+                return;
+            }
+            userData.amount = amt;
+            goToStep('step-investment-duration');
+        }
+
+        function selectInvestmentPlan(duration, rate) {
+            userData.duration = duration;
+            userData.rate = rate;
+
+            const totalProfit = userData.amount * (rate / 100);
+            const totalWithProfit = userData.amount + totalProfit;
+            const monthlyProfitOrReturn = totalWithProfit / duration;
+
+            const summaryBox = document.getElementById('investment-summary');
+            summaryBox.innerHTML = `
+                <p>💵 <strong>مبلغ الاستثمار:</strong> ${userData.amount.toLocaleString()} جنيه</p>
+                <p>⏱️ <strong>مدة الاستثمار:</strong> ${duration} شهور (عائد ${rate}%)</p>
+                <p>📈 <strong>إجمالي الأرباح المتوقعة:</strong> ${totalProfit.toLocaleString()} جنيه</p>
+                <p>✨ <strong>إجمالي المبلغ عند الاستحقاق:</strong> <span style="color: var(--primary-color); font-weight: bold; font-size: 1.12rem;">${totalWithProfit.toLocaleString()} جنيه</span></p>
+                <hr style="border-color: var(--border-color); margin: 10px 0;">
+                <p style="color: #5c472e;">💸 <strong>العائد الشهري التقديري:</strong> تقريباً <strong>${monthlyProfitOrReturn.toFixed(2)} جنيه شهرياً</strong></p>
+            `;
+
+            goToStep('step-investment-upload');
+        }
+
+        function finishInvestment() {
+            const fileInput = document.getElementById('inv-receipt-img');
+            if (fileInput.files.length === 0) {
+                alert('من فضلك قم برفع صورة إيصال التحويل أولاً للمتابعة.');
+                return;
+            }
+
+            const refId = generateReferenceId();
+            document.getElementById('inv-ref-text').innerText = `رقم المرجع: ${refId}`;
+
+            const message = `طلب استثمار رقم (${refId}):\n- المبلغ: ${userData.amount} جنيه\n- المدة: ${userData.duration} شهور\n- العائد: ${userData.rate}%\n(تم إرفاق إيصال التحويل على الرقم 01067648677)`;
+            const url = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            goToStep('step-investment-success');
+        }
+
+        // --- التقسيط ---
+        function selectInstallmentPlan(duration, rate) {
+            userData.duration = duration;
+            userData.rate = rate;
+            goToStep('step-installment-amount');
+        }
+
+        function setInstAmount(val) {
+            document.getElementById('inst-input-amount').value = val;
+        }
+
+        function submitInstallmentAmount() {
+            const amt = parseFloat(document.getElementById('inst-input-amount').value);
+            if(!amt || amt <= 0) {
+                alert('من فضلك أدخل مبلغ تمويل صحيح');
+                return;
+            }
+            userData.amount = amt;
+
+            const totalInterest = userData.amount * (userData.rate / 100);
+            const totalWithInterest = userData.amount + totalInterest;
+            const monthlyPayment = totalWithInterest / userData.duration;
+
+            const calcBox = document.getElementById('installment-calc-box');
+            calcBox.innerHTML = `
+                <p>💵 <strong>مبلغ التمويل:</strong> ${userData.amount.toLocaleString()} جنيه</p>
+                <p>⏱️ <strong>مدة السداد والفائدة:</strong> ${userData.duration} شهور (فائدة ${userData.rate}%)</p>
+                <p>📊 <strong>إجمالي المبلغ المستحق:</strong> ${totalWithInterest.toFixed(2)} جنيه</p>
+                <p style="font-size: 1.15rem; margin-top: 10px;">💳 <strong>قسط الشهر الواحد:</strong> <span style="color: var(--primary-color); font-weight: bold;">${monthlyPayment.toFixed(2)} جنيه / شهرياً</span></p>
+            `;
+
+            goToStep('step-installment-summary');
+        }
+
+        function finishInstallment() {
+            const fileInput = document.getElementById('inst-id-img');
+            if (fileInput.files.length === 0) {
+                alert('من فضلك قم برفع صورة البطاقة الشخصية أولاً لإتمام الطلب.');
+                return;
+            }
+
+            const refId = generateReferenceId();
+            document.getElementById('inst-ref-text').innerText = `رقم المرجع: ${refId}`;
+
+            const totalInterest = userData.amount * (userData.rate / 100);
+            const totalWithInterest = userData.amount + totalInterest;
+            const monthlyPayment = totalWithInterest / userData.duration;
+
+            const message = `طلب تقسيط رقم (${refId}):\n- المبلغ: ${userData.amount} جنيه\n- المدة: ${userData.duration} شهور\n- الفائدة: ${userData.rate}%\n- إجمالي المبلغ: ${totalWithInterest.toFixed(2)} جنيه\n- القسط الشهري: ${monthlyPayment.toFixed(2)} جنيه\n(تم رفع صورة البطاقة الشخصية)`;
+            const url = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            goToStep('step-installment-success');
+        }
+    </script>
+</body>
+</html>
